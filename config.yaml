@@ -1,0 +1,43 @@
+# For docs, see: https://coreos.github.io/butane/specs/
+
+variant: fcos
+version: 1.6.0
+
+passwd:
+  users:
+    - name: core
+      groups:
+        - docker
+        - wheel
+        - sudo
+      ssh_authorized_keys:
+        # Will be replaced by terraform script
+        - $ssh_public_key
+      password_hash: $passwd_hash
+
+systemd:
+  units:
+    - name: docker.service
+      mask: true
+    - name: netavark-firewalld-reload.service
+      enabled: true
+    - name: podman-restart.service
+      enabled: true
+
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Fedora CoreOS disables SSH password login by default.
+          # Enable it.
+          # This file must sort before 40-disable-passwords.conf.
+          PasswordAuthentication yes
+    - path: /etc/sysctl.d/99-tailscale.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Enable IP forwarding
+          net.ipv4.ip_forward = 1
+          net.ipv6.conf.all.forwarding = 1
