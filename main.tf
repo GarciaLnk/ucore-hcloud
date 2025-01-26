@@ -91,17 +91,6 @@ resource "hcloud_ssh_key" "key" {
 resource "hcloud_firewall" "default_firewall" {
   name = "default_firewall"
 
-  # Open ports beyond 32767
-  rule {
-    direction = "in"
-    protocol  = "udp"
-    port      = "32768-65535"
-    source_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-
   # SSH
   rule {
     direction = "in"
@@ -129,17 +118,6 @@ resource "hcloud_firewall" "default_firewall" {
     direction = "in"
     protocol  = "tcp"
     port      = "443"
-    source_ips = [
-      "0.0.0.0/0",
-      "::/0"
-    ]
-  }
-
-  # HTTP/Testing
-  rule {
-    direction = "in"
-    protocol  = "tcp"
-    port      = "8080"
     source_ips = [
       "0.0.0.0/0",
       "::/0"
